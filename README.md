@@ -2,6 +2,10 @@
 
 ![screenshot](./screenshot.png)
 
+### Demo
+
+[https://react-highlightjs-logs.netlify.app/](https://react-highlightjs-logs.netlify.app/)
+
 ### Usage
 
 ### installation
