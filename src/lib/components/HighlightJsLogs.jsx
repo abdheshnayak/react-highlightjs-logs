@@ -124,7 +124,7 @@ ${url}`
   }, []);
 
   return (
-    <div className="flex flex-col max-w-[54rem] flex-1">
+    <div className="flex flex-col flex-1">
       <LogBlock {...{ data, follow, enableSearch, selectableLines, title }} />
     </div>
   );
