@@ -75,6 +75,10 @@ const HighlightJsLog = ({
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
 
+  useEffect(()=>{
+    setData(text)
+  },[text])
+
   useEffect(() => {
     (async () => {
       if (!url || websocket) return;
