@@ -1,6 +1,6 @@
 # React HighlightJs Logs
 
-[!screenshot]("./screenshot.png")
+![screenshot](./screenshot.png)
 
 ### Usage
 
@@ -65,7 +65,7 @@ function App() {
 }
 ```
 
-### Technology
+## Technology
 - highlight.js for syntax highlighting
 - websocket for socket connection
 - axios for fetching url data
@@ -73,13 +73,13 @@ function App() {
 - tailwindcss for design
 - tokyo-night default theme
 
-### Development and Contributing
+## Development and Contributing
 This repository uses highlight.js, websocket, axios, react-icons and tailwindcss for developing, previewing and building react components. to get started
 
 - Fork and clone this repo
 - Install the dependencies with npm or pnpm
 - Start development server with npm start. This will launch a preview screen. Open a browser to http://localhost:3000 to preview the React Component.
 - Use CTRL-C to exit the preview.
-- use npm run build to generate the compiled component for publishing to npm.
+- Use npm run build to generate the compiled component for publishing to npm.
 
 Feel free to open an issue, submit a pull request, or contribute however you would like. Understand that this documentation is still a work in progress, so file and issue or submit a PR to ask questions or make imporvements. Thanks!
