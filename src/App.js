@@ -8,6 +8,7 @@ function App() {
         noScrollBar
         title="Last 24 hours logs" 
         url={`/logs.txt`} 
+        fontSize={14}
         // maxLines={100}
        />
     </div>

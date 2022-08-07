@@ -152,6 +152,23 @@ function App() {
 }
 ```
 
+### Font Size
+You can also manage Font Size by adding fontSize property. It's Number value and can be provided as shown below. default fontSize is 14.
+
+```javascript
+function App() {
+  return (
+    <div className="p-6">
+      <HighlightJsLogs 
+          maxHeight="calc(100vh - 9rem)"
+          title="Last 24 hours logs" 
+          url={`/logs.txt`} 
+          fontSize={14}
+        />
+    </div>
+  );
+}
+```
 
 
 ## Technology

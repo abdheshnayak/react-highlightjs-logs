@@ -1,5 +1,5 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+// import 'core-js/stable';
+// import 'regenerator-runtime/runtime';
 
 import hljs from 'highlight.js';
 import * as sock from 'websocket';
@@ -74,6 +74,7 @@ const HighlightJsLog = ({
   maxHeight = '300px',
   noScrollBar = false,
   maxLines = null,
+  fontSize = 14,
 }) => {
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
@@ -145,6 +146,7 @@ ${url}`
           maxHeight,
           noScrollBar,
           maxLines,
+          fontSize,
         }}
       />
     </div>
@@ -254,7 +256,7 @@ const padLeadingZeros = (num, size) => {
 
 const WithSearchHighlightIt = ({
   inlineData = '',
-  className,
+  className = '',
   searchText = '',
 }) => {
   const x = useSearch(
@@ -285,6 +287,7 @@ const LogBlock = ({
   maxHeight,
   noScrollBar,
   maxLines,
+  fontSize,
 }) => {
   const lines = data.split('\n');
 
@@ -367,7 +370,7 @@ const LogBlock = ({
         })}
         style={{ maxHeight }}
       >
-        <div className="flex flex-1">
+        <div className="flex flex-1" style={{ gap: fontSize }}>
           <div className="flex flex-col pl-0 no-scroll-bar leading-6">
             {(showAll
               ? lines.map((line, index) => ({
@@ -383,7 +386,10 @@ const LogBlock = ({
                   key={`ind+${searchInf.idx}`}
                   className="flex gap-4 items-center whitespace-pre"
                 >
-                  <span className="bg-gray-800 px-2 border-b border-gray-700 sticky left-0">
+                  <span
+                    className="bg-gray-800 px-2 border-b border-gray-700 sticky left-0"
+                    style={{ fontSize }}
+                  >
                     <HighlightIt
                       {...{
                         inlineData: padLeadingZeros(
@@ -391,7 +397,6 @@ const LogBlock = ({
                           `${lines.length}`.length
                         ),
                         language: 'accesslog',
-                        className: 'text-xs',
                       }}
                     />
                   </span>
@@ -416,17 +421,17 @@ const LogBlock = ({
                 <code
                   key={searchInf.idx}
                   className={classNames(
-                    'flex gap-4 items-center whitespace-pre px-5 border-b border-transparent',
+                    'flex gap-4 items-center whitespace-pre border-b border-transparent',
                     {
                       'hover:bg-gray-800': selectableLines,
                     }
                   )}
+                  style={{ fontSize }}
                 >
                   {showAll ? (
                     <WithSearchHighlightIt
                       {...{
                         inlineData: line,
-                        className: 'text-xs',
                         searchText,
                       }}
                     />
@@ -435,7 +440,6 @@ const LogBlock = ({
                       {...{
                         inlineData: line,
                         searchInf,
-                        className: 'text-xs',
                       }}
                     />
                   )}
