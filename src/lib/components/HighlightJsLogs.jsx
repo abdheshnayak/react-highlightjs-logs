@@ -319,15 +319,15 @@ const LogBlock = ({
             >
               <VscListSelection
                 className={classNames('font-medium', {
-                  'text-secondary-200': !showAll,
-                  'text-secondary-600': showAll,
+                  'text-gray-200': !showAll,
+                  'text-gray-600': showAll,
                 })}
               />
             </div>
             <code
               className={classNames('text-xs font-bold', {
-                'text-secondary-200': (searchText ? x.length : 0) !== 0,
-                'text-secondary-600': (searchText ? x.length : 0) === 0,
+                'text-gray-200': (searchText ? x.length : 0) !== 0,
+                'text-gray-600': (searchText ? x.length : 0) === 0,
               })}
             >
               {x.reduce(
