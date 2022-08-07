@@ -2,11 +2,11 @@
 
 ![screenshot](./screenshot.png)
 
-### Demo
+## Demo
 
 [https://react-highlightjs-logs.netlify.app/](https://react-highlightjs-logs.netlify.app/)
 
-### Usage
+## Usage
 
 ### installation
 Run the following command in your terminal to install the package.
