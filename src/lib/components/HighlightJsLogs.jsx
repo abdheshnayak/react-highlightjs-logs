@@ -1,9 +1,9 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 import hljs from 'highlight.js';
 import * as sock from 'websocket';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { v4 as uuid } from 'uuid';
 import { VscListSelection } from 'react-icons/vsc';
@@ -71,13 +71,16 @@ const HighlightJsLog = ({
   enableSearch = true,
   selectableLines = true,
   title = '',
+  maxHeight = '300px',
+  noScrollBar = false,
+  maxLines = null,
 }) => {
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
 
-  useEffect(()=>{
-    setData(text)
-  },[text])
+  useEffect(() => {
+    setData(text);
+  }, [text]);
 
   useEffect(() => {
     (async () => {
@@ -87,7 +90,7 @@ const HighlightJsLog = ({
           url,
           method: 'GET',
         });
-        setData(d.data);
+        setData((d.data || '').trim());
       } catch (err) {
         setData(
           `${err.message}
@@ -132,7 +135,18 @@ ${url}`
 
   return (
     <div className="flex flex-col flex-1">
-      <LogBlock {...{ data, follow, enableSearch, selectableLines, title }} />
+      <LogBlock
+        {...{
+          data,
+          follow,
+          enableSearch,
+          selectableLines,
+          title,
+          maxHeight,
+          noScrollBar,
+          maxLines,
+        }}
+      />
     </div>
   );
 };
@@ -268,14 +282,21 @@ const LogBlock = ({
   enableSearch,
   selectableLines,
   title,
+  maxHeight,
+  noScrollBar,
+  maxLines,
 }) => {
   const lines = data.split('\n');
 
-  const [searchText, setSearchText] = useState();
+  const [searchText, setSearchText] = useState('');
 
   const x = useSearch(
     {
-      data: lines,
+      data: maxLines
+        ? lines.length >= maxLines
+          ? lines.slice(lines.length - maxLines)
+          : lines
+        : lines,
       searchText,
     },
     [data, searchText]
@@ -292,7 +313,7 @@ const LogBlock = ({
   }, [data]);
 
   return (
-    <div className="hljs p-2 rounded-md border border-gray-400 flex flex-1 flex-col gap-2 h-full">
+    <div className="hljs p-2 rounded-md border border-gray-400 flex flex-1 flex-col gap-2">
       <div className="flex justify-between px-2 items-center border-b border-gray-500 pb-3">
         <div className="">
           {data ? title : 'No logs generated in last 24 hours'}
@@ -309,7 +330,7 @@ const LogBlock = ({
               className="bg-transparent border border-gray-400 rounded-md px-2 py-0.5 w-[10rem]"
               placeholder="Search"
               value={searchText}
-              onChange={(e)=>setSearchText(e.target.value)}
+              onChange={(e) => setSearchText(e.target.value)}
             />
             <div
               onClick={() => {
@@ -341,58 +362,88 @@ const LogBlock = ({
       </div>
 
       <div
-        className="flex flex-1 flex-col hljs pl-0 overflow-auto no-scroll-bar leading-6"
-        ref={ref}
-      >
-        {(showAll
-          ? lines.map((line, index) => ({
-              line,
-              searchInf: {
-                idx: index,
-              },
-            }))
-          : x
-        ).map(({ line, searchInf }) => {
-          return (
-            <code
-              key={searchInf.idx}
-              className={classNames('flex gap-4 items-center whitespace-pre', {
-                'hover:bg-gray-800': selectableLines,
-              })}
-            >
-              <span className="bg-gray-800 px-2 border-b border-gray-700 sticky left-0">
-                <HighlightIt
-                  {...{
-                    inlineData: padLeadingZeros(
-                      searchInf.idx + 1,
-                      `${lines.length}`.length
-                    ),
-                    language: 'accesslog',
-                    className: 'text-xs',
-                  }}
-                />
-              </span>
-
-              {showAll ? (
-                <WithSearchHighlightIt
-                  {...{
-                    inlineData: line,
-                    className: 'text-sm',
-                    searchText,
-                  }}
-                />
-              ) : (
-                <FilterdHighlightIt
-                  {...{
-                    inlineData: line,
-                    searchInf,
-                    className: 'text-sm',
-                  }}
-                />
-              )}
-            </code>
-          );
+        className={classNames('flex-1 overflow-y-auto', {
+          'no-scroll-bar': noScrollBar,
         })}
+        style={{ maxHeight }}
+      >
+        <div className="flex flex-1">
+          <div className="flex flex-col pl-0 no-scroll-bar leading-6">
+            {(showAll
+              ? lines.map((line, index) => ({
+                  line,
+                  searchInf: {
+                    idx: index,
+                  },
+                }))
+              : x
+            ).map(({ searchInf }) => {
+              return (
+                <code
+                  key={`ind+${searchInf.idx}`}
+                  className="flex gap-4 items-center whitespace-pre"
+                >
+                  <span className="bg-gray-800 px-2 border-b border-gray-700 sticky left-0">
+                    <HighlightIt
+                      {...{
+                        inlineData: padLeadingZeros(
+                          searchInf.idx + 1,
+                          `${lines.length}`.length
+                        ),
+                        language: 'accesslog',
+                        className: 'text-xs',
+                      }}
+                    />
+                  </span>
+                </code>
+              );
+            })}
+          </div>
+          <div
+            className="flex flex-1 flex-col pl-0 leading-6 overflow-x-auto no-scroll-bar"
+            ref={ref}
+          >
+            {(showAll
+              ? lines.map((line, index) => ({
+                  line,
+                  searchInf: {
+                    idx: index,
+                  },
+                }))
+              : x
+            ).map(({ line, searchInf }) => {
+              return (
+                <code
+                  key={searchInf.idx}
+                  className={classNames(
+                    'flex gap-4 items-center whitespace-pre px-5 border-b border-transparent',
+                    {
+                      'hover:bg-gray-800': selectableLines,
+                    }
+                  )}
+                >
+                  {showAll ? (
+                    <WithSearchHighlightIt
+                      {...{
+                        inlineData: line,
+                        className: 'text-xs',
+                        searchText,
+                      }}
+                    />
+                  ) : (
+                    <FilterdHighlightIt
+                      {...{
+                        inlineData: line,
+                        searchInf,
+                        className: 'text-xs',
+                      }}
+                    />
+                  )}
+                </code>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

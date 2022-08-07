@@ -102,6 +102,58 @@ function App() {
 ```
 By default all the values are true you can disable this by changing it's value to false.
 
+### Hide scrollbar
+You can hide the scrollbar by simpaly adding noScrollBar attribute as shown below. The default value is false so scrollbar will be visible if you don't add.
+```javascript
+function App() {
+  return (
+    <div className="p-6">
+      <HighlightJsLogs 
+        title="Last 24 hours logs" 
+        data="Hello World!" 
+        noScrollBar
+        />
+    </div>
+  );
+}
+```
+
+### Maximum Height
+Provide the maximum height for the better adjustment on your ui. The default value of maximum height is 300px.
+```javascript
+function App() {
+  return (
+    <div className="p-6">
+      <HighlightJsLogs 
+        title="Last 24 hours logs" 
+        data="Hello World!" 
+        maxHeight="calc(100vh - 9rem)"
+        />
+    </div>
+  );
+}
+```
+
+### Maximum Height
+if you want to render only last n number of lines then provide maxLines as shown below.
+```javascript
+function App() {
+  return (
+    <div className="p-6">
+      <HighlightJsLogs 
+          maxHeight="calc(100vh - 9rem)"
+          noScrollBar
+          title="Last 24 hours logs" 
+          url={`/logs.txt`} 
+          maxLines={100}
+        />
+    </div>
+  );
+}
+```
+
+
+
 ## Technology
 - highlight.js for syntax highlighting
 - websocket for socket connection
