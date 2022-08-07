@@ -3,7 +3,7 @@ import "regenerator-runtime/runtime";
 
 import hljs from 'highlight.js';
 import * as sock from 'websocket';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { v4 as uuid } from 'uuid';
 import { VscListSelection } from 'react-icons/vsc';
@@ -193,7 +193,7 @@ const FilterdHighlightIt = ({
                     key={uuid()}
                     className={classNames(
                       className,
-                      'bg-secondary-600 text-yellow-400 rounded-sm'
+                      'bg-gray-600 text-yellow-400 rounded-sm'
                     )}
                   >
                     {inlineData.slice(curr[0], curr[1])}
@@ -355,7 +355,7 @@ const LogBlock = ({
         ).map(({ line, searchInf }) => {
           return (
             <code
-              key={uuid()}
+              key={searchInf.idx}
               className={classNames('flex gap-4 items-center whitespace-pre', {
                 'hover:bg-gray-800': selectableLines,
               })}

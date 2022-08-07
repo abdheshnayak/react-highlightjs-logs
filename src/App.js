@@ -2,7 +2,7 @@ import { HighlightJsLogs } from "./lib"
 function App() {
   return (
     <div className="min-h-screen bg-orange-500">
-<div className="p-6">
+<div className="p-6 min-h-screen flex flex-col">
       <HighlightJsLogs title="Last 24 hours logs" text={`03/22 08:51:01 INFO   :.main: *************** RSVP Agent started ***************
 03/22 08:51:01 INFO   :...locate_configFile: Specified configuration file: /u/user10/rsvpd1.conf
 03/22 08:51:01 INFO   :.main: Using log level 511
@@ -33,7 +33,7 @@ function App() {
 03/22 08:51:06 WARNING:.....mailslot_create: setsockopt(MCAST_ADD) failed - EDC8116I Address not available.
 03/22 08:51:06 INFO   :....mailbox_register: mailbox allocated for rsvp-udp
 03/22 08:51:06 TRACE  :..entity_initialize: interface 9.37.65.139, entity for rsvp allocated and 
-initialized`} follow selectableLines/>
+initialized`} />
     </div>
     </div>
     

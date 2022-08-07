@@ -21,6 +21,14 @@ You can import the component as shown below.
 import { HighlightJsLogs } from "react-highlightjs-logs"
 ```
 
+### importing styles
+You can import the component as shown below.
+```javascript
+import 'react-highlightjs-logs/dist/styles/index.css'
+```
+
+
+
 #### with plain data
 If you have plain data then you can use the component as shown below.
 ```javascript
