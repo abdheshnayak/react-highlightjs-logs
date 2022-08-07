@@ -1,9 +1,9 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+// import 'core-js/stable';
+// import 'regenerator-runtime/runtime';
 
 import hljs from 'highlight.js';
 import * as sock from 'websocket';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { v4 as uuid } from 'uuid';
 import { VscListSelection } from 'react-icons/vsc';
@@ -183,8 +183,11 @@ const HighlightIt = ({
 const FilterdHighlightIt = ({
   searchInf = null,
   inlineData = '',
-  className,
+  className = '',
 }) => {
+  if (!inlineData) {
+    inlineData = ' ';
+  }
   const [res, setRes] = useState([]);
 
   useEffect(() => {
