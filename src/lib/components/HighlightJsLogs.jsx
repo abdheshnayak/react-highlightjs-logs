@@ -103,7 +103,7 @@ Please check the URL and ensure it is reachable.
 ${url}`
         );
       } finally {
-        setIsLoading(true);
+        setIsLoading(false);
       }
     })();
   }, []);
