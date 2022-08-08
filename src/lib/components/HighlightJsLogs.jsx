@@ -1,5 +1,5 @@
-// import 'core-js/stable';
-// import 'regenerator-runtime/runtime';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 import hljs from 'highlight.js';
 import * as sock from 'websocket';
@@ -161,16 +161,18 @@ const HighlightIt = ({
   const ref = useRef();
 
   useEffect(() => {
-    if (ref.current) {
-      // @ts-ignore
-      ref.current.innerHTML = hljs.highlight(
-        inlineData,
-        {
-          language,
-        },
-        false
-      ).value;
-    }
+    (async () => {
+      if (ref.current) {
+        // @ts-ignore
+        ref.current.innerHTML = hljs.highlight(
+          inlineData,
+          {
+            language,
+          },
+          false
+        ).value;
+      }
+    })();
   }, [inlineData, language]);
 
   return (
@@ -201,28 +203,26 @@ const FilterdHighlightIt = ({
               res: [
                 ...acc.res,
                 <HighlightIt
-                  // key={inlineData.slice(acc.cursor, curr[0])}
-                  key={uuid()}
+                  key={searchInf.idx + inlineData.slice(acc.cursor, curr[0])}
+                  // key={uuid()}
                   inlineData={inlineData.slice(acc.cursor, curr[0])}
                   className={className}
                 />,
-                ...[
-                  <span
-                    // key={inlineData.slice(curr[0], curr[1])}
-                    key={uuid()}
-                    className={classNames(
-                      className,
-                      'bg-gray-600 text-yellow-400 rounded-sm'
-                    )}
-                  >
-                    {inlineData.slice(curr[0], curr[1])}
-                  </span>,
-                ],
+                <span
+                  // key={searchInf.idx + inlineData.slice(curr[0], curr[1])}
+                  key={uuid()}
+                  className={classNames(
+                    className,
+                    'bg-gray-600 text-yellow-400 rounded-sm'
+                  )}
+                >
+                  {inlineData.slice(curr[0], curr[1])}
+                </span>,
                 ...[
                   index === searchInf.match.length - 1 && curr[1] !== index && (
                     <HighlightIt
-                      // key={inlineData.slice(curr[1])}
-                      key={uuid()}
+                      key={searchInf.idx + inlineData.slice(curr[1])}
+                      // key={uuid()}
                       inlineData={inlineData.slice(curr[1])}
                       className={className}
                     />
@@ -308,6 +308,15 @@ const LogBlock = ({
     [data, searchText]
   );
 
+  const y = useCallback(() => {
+    return lines.map((line, index) => ({
+      line,
+      searchInf: {
+        idx: index,
+      },
+    }));
+  }, [lines])();
+
   const [showAll, setShowAll] = useState(false);
   const ref = useRef();
 
@@ -371,19 +380,12 @@ const LogBlock = ({
         className={classNames('flex-1 overflow-y-auto', {
           'no-scroll-bar': noScrollBar,
         })}
+        ref={ref}
         style={{ maxHeight }}
       >
         <div className="flex flex-1" style={{ gap: fontSize }}>
           <div className="flex flex-col pl-0 no-scroll-bar leading-6">
-            {(showAll
-              ? lines.map((line, index) => ({
-                  line,
-                  searchInf: {
-                    idx: index,
-                  },
-                }))
-              : x
-            ).map(({ searchInf }) => {
+            {(showAll ? y : x).map(({ searchInf }) => {
               return (
                 <code
                   key={`ind+${searchInf.idx}`}
@@ -407,19 +409,8 @@ const LogBlock = ({
               );
             })}
           </div>
-          <div
-            className="flex flex-1 flex-col pl-0 leading-6 overflow-x-auto no-scroll-bar"
-            ref={ref}
-          >
-            {(showAll
-              ? lines.map((line, index) => ({
-                  line,
-                  searchInf: {
-                    idx: index,
-                  },
-                }))
-              : x
-            ).map(({ line, searchInf }) => {
+          <div className="flex flex-1 flex-col pl-0 leading-6 overflow-x-auto no-scroll-bar">
+            {(showAll ? y : x).map(({ line, searchInf }) => {
               return (
                 <code
                   key={searchInf.idx}
