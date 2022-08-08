@@ -76,6 +76,7 @@ const HighlightJsLog = ({
   maxLines = null,
   fontSize = 14,
   loadingComponent = null,
+  actionComponent = null,
 }) => {
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
@@ -145,8 +146,11 @@ ${url}`
     <div className="flex flex-col flex-1 hljs-logs">
       {isLoading ? (
         loadingComponent || (
-          <div className="hljs p-2 rounded-md flex flex-1 flex-col gap-2 items-center justify-center" style={{maxHeight}}>
-            <code className='flex-1'>
+          <div
+            className="hljs p-2 rounded-md flex flex-1 flex-col gap-2 items-center justify-center"
+            style={{ maxHeight }}
+          >
+            <code className="flex-1">
               <HighlightIt inlineData="Loading..." />
             </code>
           </div>
@@ -163,6 +167,7 @@ ${url}`
             noScrollBar,
             maxLines,
             fontSize,
+            actionComponent,
           }}
         />
       )}
@@ -308,6 +313,7 @@ const LogBlock = ({
   noScrollBar,
   maxLines,
   fontSize,
+  actionComponent,
 }) => {
   const lines = data.split('\n');
 
@@ -322,7 +328,7 @@ const LogBlock = ({
         : lines,
       searchText,
     },
-    [data, searchText]
+    [data, searchText, maxLines]
   );
 
   const y = useCallback(() => {
@@ -342,7 +348,7 @@ const LogBlock = ({
       // @ts-ignore
       ref.current.scrollTo(0, ref.current.scrollHeight);
     }
-  }, [data]);
+  }, [data, maxLines]);
 
   return (
     <div className="hljs p-2 rounded-md flex flex-1 flex-col gap-2">
@@ -350,47 +356,51 @@ const LogBlock = ({
         <div className="">
           {data ? title : 'No logs generated in last 24 hours'}
         </div>
-        {enableSearch && (
-          <form
-            className="flex gap-3 items-center text-sm"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setShowAll((s) => !s);
-            }}
-          >
-            <input
-              className="bg-transparent border border-gray-400 rounded-md px-2 py-0.5 w-[10rem]"
-              placeholder="Search"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-            <div
-              onClick={() => {
+
+        <div className="flex items-center gap-3">
+          {actionComponent}
+          {enableSearch && (
+            <form
+              className="flex gap-3 items-center text-sm"
+              onSubmit={(e) => {
+                e.preventDefault();
                 setShowAll((s) => !s);
               }}
-              className="cursor-pointer active:translate-y-0.5 transition-all"
             >
-              <VscListSelection
-                className={classNames('font-medium', {
-                  'text-gray-200': !showAll,
-                  'text-gray-600': showAll,
-                })}
+              <input
+                className="bg-transparent border border-gray-400 rounded-md px-2 py-0.5 w-[10rem]"
+                placeholder="Search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
               />
-            </div>
-            <code
-              className={classNames('text-xs font-bold', {
-                'text-gray-200': (searchText ? x.length : 0) !== 0,
-                'text-gray-600': (searchText ? x.length : 0) === 0,
-              })}
-            >
-              {x.reduce(
-                (acc, { searchInf }) => acc + (searchInf.match?.length || 0),
-                0
-              )}{' '}
-              matches
-            </code>
-          </form>
-        )}
+              <div
+                onClick={() => {
+                  setShowAll((s) => !s);
+                }}
+                className="cursor-pointer active:translate-y-0.5 transition-all"
+              >
+                <VscListSelection
+                  className={classNames('font-medium', {
+                    'text-gray-200': !showAll,
+                    'text-gray-600': showAll,
+                  })}
+                />
+              </div>
+              <code
+                className={classNames('text-xs font-bold', {
+                  'text-gray-200': (searchText ? x.length : 0) !== 0,
+                  'text-gray-600': (searchText ? x.length : 0) === 0,
+                })}
+              >
+                {x.reduce(
+                  (acc, { searchInf }) => acc + (searchInf.match?.length || 0),
+                  0
+                )}{' '}
+                matches
+              </code>
+            </form>
+          )}
+        </div>
       </div>
 
       <div

@@ -189,8 +189,27 @@ function App() {
 }
 ```
 
+### Define your own loading component
+Define your action components easily by providing component to the property actionComponent as shown below.
 
-
+```javascript
+function App() {
+  return (
+    <div className="p-6">
+      <HighlightJsLogs 
+          maxHeight="calc(100vh - 9rem)"
+          title="Last 24 hours logs" 
+          url={`/logs.txt`} 
+          actionComponent={
+            <button>
+              Refresh
+            </button>
+          }
+        />
+    </div>
+  );
+}
+```
 
 ## Technology
 - highlight.js for syntax highlighting
