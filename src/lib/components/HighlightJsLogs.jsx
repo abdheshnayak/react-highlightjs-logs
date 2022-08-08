@@ -60,6 +60,38 @@ const useSearch = ({ data, searchText }, dependency = []) => {
   }, dependency)();
 };
 
+const OPTIONS = {
+  root: null,
+  rootMargin: '0px 0px 0px 0px',
+  threshold: 0,
+};
+
+const useIsVisible = (elementRef) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      if (elementRef.current) {
+        const observer = new IntersectionObserver((entries) => {
+          // logger.log('changed');
+          // setIsVisible(isScrolledIntoView(elementRef.current));
+          entries.forEach((entry) => {
+            // console.log('changed');
+            if (entry.isIntersecting) {
+              setIsVisible(true);
+            } else {
+              setIsVisible(false);
+            }
+          });
+        }, OPTIONS);
+        observer.observe(elementRef.current);
+      }
+    })();
+  }, [elementRef?.current]);
+
+  return isVisible;
+};
+
 const HighlightJsLog = ({
   websocket = false,
   websocketOptions = {
@@ -192,6 +224,7 @@ const HighlightIt = ({
   useEffect(() => {
     (async () => {
       if (ref.current) {
+        // if (!isScrolledIntoView(ref.current)) return;
         // @ts-ignore
         ref.current.innerHTML = hljs.highlight(
           inlineData,
@@ -223,58 +256,60 @@ const FilterdHighlightIt = ({
 
   useEffect(() => {
     // TODO: multi match
-    if (searchInf?.match) {
-      setRes(
-        searchInf.match.reduce(
-          (acc, curr, index) => {
-            return {
-              cursor: curr[1],
-              res: [
-                ...acc.res,
-                <HighlightIt
-                  key={searchInf.idx + inlineData.slice(acc.cursor, curr[0])}
-                  // key={uuid()}
-                  inlineData={inlineData.slice(acc.cursor, curr[0])}
-                  className={className}
-                />,
-                <span
-                  // key={searchInf.idx + inlineData.slice(curr[0], curr[1])}
-                  key={uuid()}
-                  className={classNames(
-                    className,
-                    'bg-gray-600 text-yellow-400 rounded-sm'
-                  )}
-                >
-                  {inlineData.slice(curr[0], curr[1])}
-                </span>,
-                ...[
-                  index === searchInf.match.length - 1 && curr[1] !== index && (
-                    <HighlightIt
-                      key={searchInf.idx + inlineData.slice(curr[1])}
-                      // key={uuid()}
-                      inlineData={inlineData.slice(curr[1])}
-                      className={className}
-                    />
-                  ),
+    (async () => {
+      if (searchInf?.match) {
+        setRes(
+          searchInf.match.reduce(
+            (acc, curr, index) => {
+              return {
+                cursor: curr[1],
+                res: [
+                  ...acc.res,
+                  <HighlightIt
+                    key={searchInf.idx + inlineData.slice(acc.cursor, curr[0])}
+                    // key={uuid()}
+                    inlineData={inlineData.slice(acc.cursor, curr[0])}
+                    className={className}
+                  />,
+                  <span
+                    // key={searchInf.idx + inlineData.slice(curr[0], curr[1])}
+                    key={uuid()}
+                    className={classNames(
+                      className,
+                      'bg-gray-600 text-yellow-400 rounded-sm'
+                    )}
+                  >
+                    {inlineData.slice(curr[0], curr[1])}
+                  </span>,
+                  ...[
+                    index === searchInf.match.length - 1 && curr[1] !== index && (
+                      <HighlightIt
+                        key={searchInf.idx + inlineData.slice(curr[1])}
+                        // key={uuid()}
+                        inlineData={inlineData.slice(curr[1])}
+                        className={className}
+                      />
+                    ),
+                  ],
                 ],
-              ],
-            };
-          },
-          {
-            cursor: 0,
-            res: [],
-          }
-        ).res
-      );
-    } else {
-      setRes([
-        <HighlightIt
-          key={inlineData}
-          inlineData={inlineData}
-          className={className}
-        />,
-      ]);
-    }
+              };
+            },
+            {
+              cursor: 0,
+              res: [],
+            }
+          ).res
+        );
+      } else {
+        setRes([
+          <HighlightIt
+            key={inlineData}
+            inlineData={inlineData}
+            className={className}
+          />,
+        ]);
+      }
+    })();
   }, [searchInf]);
 
   return <div className="whitespace-pre">{res}</div>;
@@ -307,6 +342,54 @@ const WithSearchHighlightIt = ({
         ...(x.length ? { searchInf: x[0].searchInf } : {}),
       }}
     />
+  );
+};
+
+const LogLine = ({
+  searchInf,
+  line,
+  fontSize,
+  selectableLines,
+  showAll,
+  searchText,
+}) => {
+  const ref = useRef();
+  const isVisible = useIsVisible(ref);
+  return (
+    <code
+      ref={ref}
+      className={classNames(
+        'flex gap-4 items-center whitespace-pre border-b border-transparent',
+        {
+          'hover:bg-gray-800': selectableLines,
+        }
+      )}
+      style={{
+        fontSize,
+        paddingLeft: fontSize / 2,
+        paddingRight: fontSize / 2,
+      }}
+    >
+      {isVisible ? (
+        showAll ? (
+          <WithSearchHighlightIt
+            {...{
+              inlineData: line,
+              searchText,
+            }}
+          />
+        ) : (
+          <FilterdHighlightIt
+            {...{
+              inlineData: line,
+              searchInf,
+            }}
+          />
+        )
+      ) : (
+        '.'
+      )}
+    </code>
   );
 };
 
@@ -351,10 +434,12 @@ const LogBlock = ({
   const ref = useRef();
 
   useEffect(() => {
-    if (follow && ref.current) {
-      // @ts-ignore
-      ref.current.scrollTo(0, ref.current.scrollHeight);
-    }
+    (async () => {
+      if (follow && ref.current) {
+        // @ts-ignore
+        ref.current.scrollTo(0, ref.current.scrollHeight);
+      }
+    })();
   }, [data, maxLines]);
 
   return (
@@ -452,36 +537,17 @@ const LogBlock = ({
           <div className="flex-1 flex flex-col leading-6">
             {(showAll ? y : x).map(({ line, searchInf }) => {
               return (
-                <code
+                <LogLine
                   key={searchInf.idx}
-                  className={classNames(
-                    'flex gap-4 items-center whitespace-pre border-b border-transparent',
-                    {
-                      'hover:bg-gray-800': selectableLines,
-                    }
-                  )}
-                  style={{
+                  {...{
+                    searchInf,
+                    line,
                     fontSize,
-                    paddingLeft: fontSize / 2,
-                    paddingRight: fontSize / 2,
+                    selectableLines,
+                    showAll,
+                    searchText,
                   }}
-                >
-                  {showAll ? (
-                    <WithSearchHighlightIt
-                      {...{
-                        inlineData: line,
-                        searchText,
-                      }}
-                    />
-                  ) : (
-                    <FilterdHighlightIt
-                      {...{
-                        inlineData: line,
-                        searchInf,
-                      }}
-                    />
-                  )}
-                </code>
+                />
               );
             })}
           </div>
