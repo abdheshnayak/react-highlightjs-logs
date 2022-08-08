@@ -142,11 +142,11 @@ ${url}`
   }, []);
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 hljs-logs">
       {isLoading ? (
         loadingComponent || (
-          <div className="hljs p-2 rounded-md flex flex-1 flex-col gap-2 items-center justify-center">
-            <code>
+          <div className="hljs p-2 rounded-md flex flex-1 flex-col gap-2 items-center justify-center" style={{maxHeight}}>
+            <code className='flex-1'>
               <HighlightIt inlineData="Loading..." />
             </code>
           </div>
