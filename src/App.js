@@ -7,7 +7,8 @@ function App() {
     <div className="min-h-screen bg-orange-500">
       <div className="p-6 flex flex-col">
         <HighlightJsLogs 
-          maxHeight="calc(100vh - 8rem)"
+          height="calc(100vh - 3rem)"
+          width="100%"
           noScrollBar
           title="Last 24 hours logs" 
           url={`/logs.txt`} 
@@ -17,6 +18,7 @@ function App() {
               setLines(e.target.value)
               }}
               value={lines}
+              className="bg-transparent border border-gray-400 rounded-md px-2 py-1"
             >
               <option value={"all"}>
                 all
@@ -29,6 +31,10 @@ function App() {
               <option value={"100"}>
                 100
               </option>
+         <option value={"50"}>
+                50
+              </option>
+      
             </select>
           }
           {

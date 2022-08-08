@@ -118,8 +118,8 @@ function App() {
 }
 ```
 
-### Maximum Height
-Provide the maximum height for the better adjustment on your ui. The default value of maximum height is 300px.
+### Width and Height
+You need to specify width and height for better fit in your ui. by default width is 600px and height is 400px. you can specify these as shown below.
 ```javascript
 function App() {
   return (
@@ -127,25 +127,8 @@ function App() {
       <HighlightJsLogs 
         title="Last 24 hours logs" 
         data="Hello World!" 
-        maxHeight="calc(100vh - 9rem)"
-        />
-    </div>
-  );
-}
-```
-
-### Maximum Height
-if you want to render only last n number of lines then provide maxLines as shown below.
-```javascript
-function App() {
-  return (
-    <div className="p-6">
-      <HighlightJsLogs 
-          maxHeight="calc(100vh - 9rem)"
-          noScrollBar
-          title="Last 24 hours logs" 
-          url={`/logs.txt`} 
-          maxLines={100}
+        height='400px',
+        width='600px',
         />
     </div>
   );
@@ -160,7 +143,6 @@ function App() {
   return (
     <div className="p-6">
       <HighlightJsLogs 
-          maxHeight="calc(100vh - 9rem)"
           title="Last 24 hours logs" 
           url={`/logs.txt`} 
           fontSize={14}
@@ -178,7 +160,6 @@ function App() {
   return (
     <div className="p-6">
       <HighlightJsLogs 
-          maxHeight="calc(100vh - 9rem)"
           title="Last 24 hours logs" 
           url={`/logs.txt`} 
           fontSize={14}
@@ -197,7 +178,6 @@ function App() {
   return (
     <div className="p-6">
       <HighlightJsLogs 
-          maxHeight="calc(100vh - 9rem)"
           title="Last 24 hours logs" 
           url={`/logs.txt`} 
           actionComponent={

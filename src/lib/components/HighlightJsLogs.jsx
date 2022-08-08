@@ -71,7 +71,8 @@ const HighlightJsLog = ({
   enableSearch = true,
   selectableLines = true,
   title = '',
-  maxHeight = '300px',
+  height = '400px',
+  width = '600px',
   noScrollBar = false,
   maxLines = null,
   fontSize = 14,
@@ -143,14 +144,17 @@ ${url}`
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 hljs-logs">
+    <div
+      className="hljs-logs"
+      style={{
+        width,
+        height,
+      }}
+    >
       {isLoading ? (
         loadingComponent || (
-          <div
-            className="hljs p-2 rounded-md flex flex-1 flex-col gap-2 items-center justify-center"
-            style={{ maxHeight }}
-          >
-            <code className="flex-1">
+          <div className="hljs p-2 rounded-md flex flex-col gap-2 items-center justify-center h-full">
+            <code className="">
               <HighlightIt inlineData="Loading..." />
             </code>
           </div>
@@ -163,11 +167,12 @@ ${url}`
             enableSearch,
             selectableLines,
             title,
-            maxHeight,
             noScrollBar,
             maxLines,
             fontSize,
             actionComponent,
+            width,
+            height,
           }}
         />
       )}
@@ -309,11 +314,11 @@ const LogBlock = ({
   enableSearch,
   selectableLines,
   title,
-  maxHeight,
   noScrollBar,
   maxLines,
   fontSize,
   actionComponent,
+  width,
 }) => {
   const lines = data.split('\n');
 
@@ -351,7 +356,7 @@ const LogBlock = ({
   }, [data, maxLines]);
 
   return (
-    <div className="hljs p-2 rounded-md flex flex-1 flex-col gap-2">
+    <div className="hljs p-2 rounded-md flex flex-col gap-2 h-full">
       <div className="flex justify-between px-2 items-center border-b border-gray-500 pb-3">
         <div className="">
           {data ? title : 'No logs generated in last 24 hours'}
@@ -404,14 +409,14 @@ const LogBlock = ({
       </div>
 
       <div
-        className={classNames('flex-1 overflow-y-auto', {
+        className={classNames('flex flex-1 overflow-auto', {
           'no-scroll-bar': noScrollBar,
+          'hljs-log-scrollbar': !noScrollBar,
         })}
         ref={ref}
-        style={{ maxHeight }}
       >
-        <div className="flex flex-1" style={{ gap: fontSize }}>
-          <div className="flex flex-col pl-0 no-scroll-bar leading-6">
+        <div className="flex flex-1 h-full" style={{ gap: fontSize }}>
+          <div className="flex flex-col leading-6 sticky left-0">
             {(showAll ? y : x).map(({ searchInf }) => {
               return (
                 <code
@@ -419,54 +424,59 @@ const LogBlock = ({
                   className="flex gap-4 items-center whitespace-pre"
                 >
                   <span
-                    className="bg-gray-800 px-2 border-b border-gray-700 sticky left-0"
+                    className="hljs flex sticky left-0"
                     style={{ fontSize }}
                   >
                     <HighlightIt
                       {...{
                         inlineData: padLeadingZeros(
                           searchInf.idx + 1,
-                          `${lines.length}`.length
+                          `${(showAll ? y : x).length}`.length
                         ),
                         language: 'accesslog',
+                        className: 'bg-gray-800 border-gray-700 border-b px-2',
                       }}
                     />
+                    <div className="hljs" style={{ width: fontSize / 2 }} />
                   </span>
                 </code>
               );
             })}
           </div>
-          <div className="flex flex-1 flex-col pl-0 leading-6 overflow-x-auto no-scroll-bar">
-            {(showAll ? y : x).map(({ line, searchInf }) => {
-              return (
-                <code
-                  key={searchInf.idx}
-                  className={classNames(
-                    'flex gap-4 items-center whitespace-pre border-b border-transparent',
-                    {
-                      'hover:bg-gray-800': selectableLines,
-                    }
-                  )}
-                  style={{ fontSize }}
-                >
-                  {showAll ? (
-                    <WithSearchHighlightIt
-                      {...{
-                        inlineData: line,
-                        searchText,
-                      }}
-                    />
-                  ) : (
-                    <FilterdHighlightIt
-                      {...{
-                        inlineData: line,
-                        searchInf,
-                      }}
-                    />
-                  )}
-                </code>
-              );
-            })}
+
+          <div>
+            <div className="flex flex-col leading-6">
+              {(showAll ? y : x).map(({ line, searchInf }) => {
+                return (
+                  <code
+                    key={searchInf.idx}
+                    className={classNames(
+                      'flex gap-4 items-center whitespace-pre border-b border-transparent',
+                      {
+                        'hover:bg-gray-800': selectableLines,
+                      }
+                    )}
+                    style={{ fontSize }}
+                  >
+                    {showAll ? (
+                      <WithSearchHighlightIt
+                        {...{
+                          inlineData: line,
+                          searchText,
+                        }}
+                      />
+                    ) : (
+                      <FilterdHighlightIt
+                        {...{
+                          inlineData: line,
+                          searchInf,
+                        }}
+                      />
+                    )}
+                  </code>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
