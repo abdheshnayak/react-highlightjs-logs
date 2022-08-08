@@ -9,8 +9,6 @@ function App() {
           title="Last 24 hours logs" 
           url={`/logs.txt`} 
           fontSize={14}
-          // maxLines={100}
-          loadingComponent={<span>Loading...</span>}
         />
       </div>
     </div>
