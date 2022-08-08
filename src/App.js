@@ -10,6 +10,7 @@ function App() {
         url={`/logs.txt`} 
         fontSize={14}
         // maxLines={100}
+        loadingComponent={<span>Loading...</span>}
        />
     </div>
     </div>

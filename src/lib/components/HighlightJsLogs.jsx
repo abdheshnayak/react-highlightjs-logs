@@ -75,9 +75,11 @@ const HighlightJsLog = ({
   noScrollBar = false,
   maxLines = null,
   fontSize = 14,
+  loadingComponent = null,
 }) => {
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setData(text);
@@ -86,6 +88,7 @@ const HighlightJsLog = ({
   useEffect(() => {
     (async () => {
       if (!url || websocket) return;
+      setIsLoading(true);
       try {
         const d = await axios({
           url,
@@ -99,6 +102,8 @@ An error occurred attempting to load the provided log.
 Please check the URL and ensure it is reachable.
 ${url}`
         );
+      } finally {
+        setIsLoading(true);
       }
     })();
   }, []);
@@ -107,9 +112,11 @@ ${url}`
     if (!url || !websocket) return;
 
     let wsclient;
+    setIsLoading(true);
     try {
       wsclient = new sock.w3cwebsocket(url, '', '', {}, null);
     } catch (err) {
+      setIsLoading(false);
       setData(
         `${err.message}
 An error occurred attempting to load the provided log.
@@ -118,7 +125,6 @@ ${url}`
       );
       return;
     }
-
     // wsclient.onopen = logger.log;
     // wsclient.onclose = logger.log;
     // wsclient.onerror = logger.log;
@@ -127,6 +133,7 @@ ${url}`
       try {
         const m = formatMessage ? formatMessage(msg.data) : msg;
         setData((s) => `${s}${m ? `\n${m}` : ''}`);
+        setIsLoading(false);
       } catch (err) {
         console.log(err);
         setData("'Something went wrong! Please try again.'");
@@ -136,19 +143,29 @@ ${url}`
 
   return (
     <div className="flex flex-col flex-1">
-      <LogBlock
-        {...{
-          data,
-          follow,
-          enableSearch,
-          selectableLines,
-          title,
-          maxHeight,
-          noScrollBar,
-          maxLines,
-          fontSize,
-        }}
-      />
+      {isLoading ? (
+        loadingComponent || (
+          <div className="hljs p-2 rounded-md flex flex-1 flex-col gap-2 items-center justify-center">
+            <code>
+              <HighlightIt inlineData="Loading..." />
+            </code>
+          </div>
+        )
+      ) : (
+        <LogBlock
+          {...{
+            data,
+            follow,
+            enableSearch,
+            selectableLines,
+            title,
+            maxHeight,
+            noScrollBar,
+            maxLines,
+            fontSize,
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -328,7 +345,7 @@ const LogBlock = ({
   }, [data]);
 
   return (
-    <div className="hljs p-2 rounded-md border border-gray-400 flex flex-1 flex-col gap-2">
+    <div className="hljs p-2 rounded-md flex flex-1 flex-col gap-2">
       <div className="flex justify-between px-2 items-center border-b border-gray-500 pb-3">
         <div className="">
           {data ? title : 'No logs generated in last 24 hours'}

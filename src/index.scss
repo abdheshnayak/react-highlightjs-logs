@@ -1,0 +1,36 @@
+// @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.hljs-logs{
+        .no-scroll-bar::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+
+    .hljs-log-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    }
+
+    /* Track */
+    .hljs-log-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+    }
+
+    /* Handle */
+    .hljs-log-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-500 rounded cursor-pointer;
+    }
+
+    .hljs-log-scrollbar::-webkit-scrollbar-track-piece {
+    @apply bg-transparent;
+    }
+
+    /* Handle on hover */
+    .hljs-log-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
+    }
+}
+
+
