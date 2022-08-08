@@ -78,6 +78,7 @@ const HighlightJsLog = ({
   fontSize = 14,
   loadingComponent = null,
   actionComponent = null,
+  hideLines = false,
 }) => {
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
@@ -173,6 +174,7 @@ ${url}`
             actionComponent,
             width,
             height,
+            hideLines,
           }}
         />
       )}
@@ -318,7 +320,7 @@ const LogBlock = ({
   maxLines,
   fontSize,
   actionComponent,
-  width,
+  hideLines,
 }) => {
   const lines = data.split('\n');
 
@@ -416,71 +418,72 @@ const LogBlock = ({
         ref={ref}
       >
         <div className="flex flex-1 h-full">
-          <div className="flex flex-col leading-6 sticky left-0">
-            {(showAll ? y : x).map(({ searchInf }) => {
-              return (
-                <code
-                  key={`ind+${searchInf.idx}`}
-                  className="flex gap-4 items-center whitespace-pre"
-                >
-                  <span
-                    className="hljs flex sticky left-0"
-                    style={{ fontSize }}
-                  >
-                    <HighlightIt
-                      {...{
-                        inlineData: padLeadingZeros(
-                          searchInf.idx + 1,
-                          `${(showAll ? y : x).length}`.length
-                        ),
-                        language: 'accesslog',
-                        className: 'bg-gray-800 border-gray-700 border-b px-2',
-                      }}
-                    />
-                    <div className="hljs" style={{ width: fontSize / 2 }} />
-                  </span>
-                </code>
-              );
-            })}
-          </div>
-
-          <div>
-            <div className="flex flex-col leading-6">
-              {(showAll ? y : x).map(({ line, searchInf }) => {
+          {!hideLines && (
+            <div className="flex flex-col leading-6 sticky left-0">
+              {(showAll ? y : x).map(({ searchInf }) => {
                 return (
                   <code
-                    key={searchInf.idx}
-                    className={classNames(
-                      'flex gap-4 items-center whitespace-pre border-b border-transparent',
-                      {
-                        'hover:bg-gray-800': selectableLines,
-                      }
-                    )}
-                    style={{
-                      fontSize,
-                      paddingLeft: fontSize / 2,
-                      paddingRight: fontSize / 2,
-                    }}
+                    key={`ind+${searchInf.idx}`}
+                    className="flex gap-4 items-center whitespace-pre"
                   >
-                    {showAll ? (
-                      <WithSearchHighlightIt
+                    <span
+                      className="hljs flex sticky left-0"
+                      style={{ fontSize }}
+                    >
+                      <HighlightIt
                         {...{
-                          inlineData: line,
-                          searchText,
+                          inlineData: padLeadingZeros(
+                            searchInf.idx + 1,
+                            `${(showAll ? y : x).length}`.length
+                          ),
+                          language: 'accesslog',
+                          className:
+                            'bg-gray-800 border-gray-700 border-b px-2',
                         }}
                       />
-                    ) : (
-                      <FilterdHighlightIt
-                        {...{
-                          inlineData: line,
-                          searchInf,
-                        }}
-                      />
-                    )}
+                      <div className="hljs" style={{ width: fontSize / 2 }} />
+                    </span>
                   </code>
                 );
               })}
             </div>
+          )}
+
+          <div className="flex-1 flex flex-col leading-6">
+            {(showAll ? y : x).map(({ line, searchInf }) => {
+              return (
+                <code
+                  key={searchInf.idx}
+                  className={classNames(
+                    'flex gap-4 items-center whitespace-pre border-b border-transparent',
+                    {
+                      'hover:bg-gray-800': selectableLines,
+                    }
+                  )}
+                  style={{
+                    fontSize,
+                    paddingLeft: fontSize / 2,
+                    paddingRight: fontSize / 2,
+                  }}
+                >
+                  {showAll ? (
+                    <WithSearchHighlightIt
+                      {...{
+                        inlineData: line,
+                        searchText,
+                      }}
+                    />
+                  ) : (
+                    <FilterdHighlightIt
+                      {...{
+                        inlineData: line,
+                        searchInf,
+                      }}
+                    />
+                  )}
+                </code>
+              );
+            })}
           </div>
         </div>
       </div>
