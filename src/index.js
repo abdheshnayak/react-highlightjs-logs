@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.scss';
-import './themes/tokyo-night.css';
+import './css/deply.scss';
+// import './css/build.scss';
 import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
