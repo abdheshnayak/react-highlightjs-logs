@@ -415,7 +415,7 @@ const LogBlock = ({
         })}
         ref={ref}
       >
-        <div className="flex flex-1 h-full" style={{ gap: fontSize }}>
+        <div className="flex flex-1 h-full">
           <div className="flex flex-col leading-6 sticky left-0">
             {(showAll ? y : x).map(({ searchInf }) => {
               return (
@@ -456,7 +456,11 @@ const LogBlock = ({
                         'hover:bg-gray-800': selectableLines,
                       }
                     )}
-                    style={{ fontSize }}
+                    style={{
+                      fontSize,
+                      paddingLeft: fontSize / 2,
+                      paddingRight: fontSize / 2,
+                    }}
                   >
                     {showAll ? (
                       <WithSearchHighlightIt
