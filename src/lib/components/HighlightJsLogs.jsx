@@ -393,6 +393,42 @@ const LogLine = ({
   );
 };
 
+const LineNumber = ({ searchInf, fontSize, lines }) => {
+  const ref = useRef();
+  const isVisible = useIsVisible(ref);
+  const [data, setData] = useState(() =>
+    padLeadingZeros(searchInf.idx + 1, `${lines.length}`.length)
+  );
+
+  useEffect(() => {
+    setData(padLeadingZeros(searchInf.idx + 1, `${lines.length}`.length));
+  }, [lines, searchInf]);
+  return (
+    <code
+      key={`ind+${searchInf.idx}`}
+      className="flex gap-4 items-center whitespace-pre"
+      ref={ref}
+    >
+      <span className="hljs flex sticky left-0" style={{ fontSize }}>
+        {isVisible ? (
+          <HighlightIt
+            {...{
+              inlineData: data,
+              language: 'accesslog',
+              className: 'bg-gray-800 border-gray-700 border-b px-2',
+            }}
+          />
+        ) : (
+          <span className="bg-gray-800 border-gray-700 border-b px-2">
+            {data}
+          </span>
+        )}
+        <div className="hljs" style={{ width: fontSize / 2 }} />
+      </span>
+    </code>
+  );
+};
+
 const LogBlock = ({
   data = '',
   follow,
@@ -507,28 +543,10 @@ const LogBlock = ({
             <div className="flex flex-col leading-6 sticky left-0">
               {(showAll ? y : x).map(({ searchInf }) => {
                 return (
-                  <code
-                    key={`ind+${searchInf.idx}`}
-                    className="flex gap-4 items-center whitespace-pre"
-                  >
-                    <span
-                      className="hljs flex sticky left-0"
-                      style={{ fontSize }}
-                    >
-                      <HighlightIt
-                        {...{
-                          inlineData: padLeadingZeros(
-                            searchInf.idx + 1,
-                            `${(showAll ? y : x).length}`.length
-                          ),
-                          language: 'accesslog',
-                          className:
-                            'bg-gray-800 border-gray-700 border-b px-2',
-                        }}
-                      />
-                      <div className="hljs" style={{ width: fontSize / 2 }} />
-                    </span>
-                  </code>
+                  <LineNumber
+                    key={`idx${searchInf.idx}`}
+                    {...{ searchInf, lines: y, fontSize }}
+                  />
                 );
               })}
             </div>

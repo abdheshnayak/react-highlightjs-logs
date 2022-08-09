@@ -1,6 +1,6 @@
 {
   "name": "react-highlightjs-logs",
-  "version": "1.0.34",
+  "version": "1.0.36",
   "author": "Abdhesh Nayak",
   "license": "MIT",
   "description": "A easy to use react logs rendring component.",
