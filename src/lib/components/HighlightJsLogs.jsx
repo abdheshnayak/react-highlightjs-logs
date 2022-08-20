@@ -73,10 +73,7 @@ const useIsVisible = (elementRef) => {
     (async () => {
       if (elementRef.current) {
         const observer = new IntersectionObserver((entries) => {
-          // logger.log('changed');
-          // setIsVisible(isScrolledIntoView(elementRef.current));
           entries.forEach((entry) => {
-            // console.log('changed');
             if (entry.isIntersecting) {
               setIsVisible(true);
             } else {
@@ -265,12 +262,19 @@ const FilterdHighlightIt = ({
                 cursor: curr[1],
                 res: [
                   ...acc.res,
-                  <HighlightIt
-                    key={searchInf.idx + inlineData.slice(acc.cursor, curr[0])}
-                    // key={uuid()}
-                    inlineData={inlineData.slice(acc.cursor, curr[0])}
-                    className={className}
-                  />,
+                  ...(inlineData.slice(acc.cursor, curr[0])
+                    ? [
+                        <HighlightIt
+                          key={
+                            searchInf.idx +
+                            inlineData.slice(acc.cursor, curr[0])
+                          }
+                          // key={uuid()}
+                          inlineData={inlineData.slice(acc.cursor, curr[0])}
+                          className={className}
+                        />,
+                      ]
+                    : []),
                   <span
                     // key={searchInf.idx + inlineData.slice(curr[0], curr[1])}
                     key={uuid()}
@@ -279,7 +283,7 @@ const FilterdHighlightIt = ({
                       'bg-gray-600 text-yellow-400 rounded-sm'
                     )}
                   >
-                    {inlineData.slice(curr[0], curr[1])}
+                    {inlineData.slice(curr[0], curr[1]) || ' '}
                   </span>,
                   ...[
                     index === searchInf.match.length - 1 && curr[1] !== index && (
@@ -387,7 +391,7 @@ const LogLine = ({
           />
         )
       ) : (
-        '.'
+        '`'
       )}
     </code>
   );
