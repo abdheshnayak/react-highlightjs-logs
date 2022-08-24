@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { v4 as uuid } from 'uuid';
 import { VscListSelection } from 'react-icons/vsc';
 import axios from 'axios';
+import { FiMaximize, FiMinimize } from 'react-icons/fi';
 
 const getIndicesOf = (sourceStr, searchStr) => {
   const maxMatch = 20;
@@ -112,6 +113,7 @@ const HighlightJsLog = ({
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
   const [isLoading, setIsLoading] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
 
   useEffect(() => {
     setData(text);
@@ -175,10 +177,12 @@ ${url}`
 
   return (
     <div
-      className="hljs-logs"
+      className={classNames('hljs-logs', {
+        'fixed w-full h-full left-0 top-0 z-[999] bg-black': fullScreen,
+      })}
       style={{
-        width,
-        height,
+        width: fullScreen ? '100vw' : width,
+        height: fullScreen ? '100vh' : height,
       }}
     >
       {isLoading ? (
@@ -200,9 +204,19 @@ ${url}`
             noScrollBar,
             maxLines,
             fontSize,
-            actionComponent,
-            width,
-            height,
+            actionComponent: (
+              <div className="flex gap-4">
+                <div
+                  onClick={() => setFullScreen((s) => !s)}
+                  className="flex items-center justify-center font-bold text-xl cursor-pointer select-none active:translate-y-[1px] transition-all"
+                >
+                  {fullScreen ? <FiMinimize /> : <FiMaximize />}
+                </div>
+                {actionComponent}
+              </div>
+            ),
+            width: fullScreen ? '100vw' : width,
+            height: fullScreen ? '100vh' : height,
             hideLines,
           }}
         />
@@ -391,7 +405,7 @@ const LogLine = ({
           />
         )
       ) : (
-        '⠀'
+        'loading...'
       )}
     </code>
   );
@@ -509,7 +523,7 @@ const LogBlock = ({
                 onClick={() => {
                   setShowAll((s) => !s);
                 }}
-                className="cursor-pointer active:translate-y-0.5 transition-all"
+                className="cursor-pointer active:translate-y-[1px] transition-all"
               >
                 <VscListSelection
                   className={classNames('font-medium', {
