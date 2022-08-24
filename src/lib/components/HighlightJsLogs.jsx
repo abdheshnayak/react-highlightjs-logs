@@ -109,6 +109,7 @@ const HighlightJsLog = ({
   loadingComponent = null,
   actionComponent = null,
   hideLines = false,
+  language = 'accesslog',
 }) => {
   const [data, setData] = useState(text);
   const { formatMessage } = websocketOptions;
@@ -189,7 +190,7 @@ ${url}`
         loadingComponent || (
           <div className="hljs p-2 rounded-md flex flex-col gap-2 items-center justify-center h-full">
             <code className="">
-              <HighlightIt inlineData="Loading..." />
+              <HighlightIt language={language} inlineData="Loading..." />
             </code>
           </div>
         )
@@ -218,6 +219,7 @@ ${url}`
             width: fullScreen ? '100vw' : width,
             height: fullScreen ? '100vh' : height,
             hideLines,
+            language,
           }}
         />
       )}
@@ -225,11 +227,7 @@ ${url}`
   );
 };
 
-const HighlightIt = ({
-  language = 'accesslog',
-  inlineData = '',
-  className = '',
-}) => {
+const HighlightIt = ({ language, inlineData = '', className = '' }) => {
   const ref = useRef();
 
   useEffect(() => {
@@ -259,6 +257,7 @@ const FilterdHighlightIt = ({
   searchInf = null,
   inlineData = '',
   className = '',
+  language,
 }) => {
   if (!inlineData) {
     inlineData = ' ';
@@ -279,6 +278,7 @@ const FilterdHighlightIt = ({
                   ...(inlineData.slice(acc.cursor, curr[0])
                     ? [
                         <HighlightIt
+                          language={language}
                           key={
                             searchInf.idx +
                             inlineData.slice(acc.cursor, curr[0])
@@ -306,6 +306,7 @@ const FilterdHighlightIt = ({
                         // key={uuid()}
                         inlineData={inlineData.slice(curr[1])}
                         className={className}
+                        language={language}
                       />
                     ),
                   ],
@@ -324,6 +325,7 @@ const FilterdHighlightIt = ({
             key={inlineData}
             inlineData={inlineData}
             className={className}
+            language={language}
           />,
         ]);
       }
@@ -343,6 +345,7 @@ const WithSearchHighlightIt = ({
   inlineData = '',
   className = '',
   searchText = '',
+  language,
 }) => {
   const x = useSearch(
     {
@@ -357,6 +360,7 @@ const WithSearchHighlightIt = ({
       {...{
         inlineData,
         className,
+        language,
         ...(x.length ? { searchInf: x[0].searchInf } : {}),
       }}
     />
@@ -370,6 +374,7 @@ const LogLine = ({
   selectableLines,
   showAll,
   searchText,
+  language,
 }) => {
   const ref = useRef();
   const isVisible = useIsVisible(ref);
@@ -394,6 +399,7 @@ const LogLine = ({
             {...{
               inlineData: line,
               searchText,
+              language,
             }}
           />
         ) : (
@@ -401,6 +407,7 @@ const LogLine = ({
             {...{
               inlineData: line,
               searchInf,
+              language,
             }}
           />
         )
@@ -458,6 +465,7 @@ const LogBlock = ({
   fontSize,
   actionComponent,
   hideLines,
+  language,
 }) => {
   const lines = data.split('\n');
 
@@ -582,6 +590,7 @@ const LogBlock = ({
                     selectableLines,
                     showAll,
                     searchText,
+                    language,
                   }}
                 />
               );
