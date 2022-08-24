@@ -9,7 +9,7 @@ function App() {
         <HighlightJsLogs 
           height="calc(100vh - 3rem)"
           width="100%"
-          noScrollBar
+          // noScrollBar
           title="Last 24 hours logs" 
           url={`/logs.txt`} 
           fontSize={14}

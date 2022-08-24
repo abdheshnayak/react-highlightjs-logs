@@ -1,5 +1,5 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
+// import 'core-js/stable';
+// import 'regenerator-runtime/runtime';
 
 import hljs from 'highlight.js';
 import * as sock from 'websocket';
@@ -109,6 +109,7 @@ const HighlightJsLog = ({
   loadingComponent = null,
   actionComponent = null,
   hideLines = false,
+  dark = true,
   language = 'accesslog',
 }) => {
   const [data, setData] = useState(text);
@@ -220,6 +221,7 @@ ${url}`
             height: fullScreen ? '100vh' : height,
             hideLines,
             language,
+            dark,
           }}
         />
       )}
@@ -258,6 +260,7 @@ const FilterdHighlightIt = ({
   inlineData = '',
   className = '',
   language,
+  dark,
 }) => {
   if (!inlineData) {
     inlineData = ' ';
@@ -292,10 +295,10 @@ const FilterdHighlightIt = ({
                   <span
                     // key={searchInf.idx + inlineData.slice(curr[0], curr[1])}
                     key={uuid()}
-                    className={classNames(
-                      className,
-                      'bg-gray-600 text-yellow-400 rounded-sm'
-                    )}
+                    className={classNames(className, ' rounded-sm', {
+                      'bg-gray-600 text-yellow-400': dark,
+                      'bg-gray-200 text-yellow-900': !dark,
+                    })}
                   >
                     {inlineData.slice(curr[0], curr[1]) || ' '}
                   </span>,
@@ -346,6 +349,7 @@ const WithSearchHighlightIt = ({
   className = '',
   searchText = '',
   language,
+  dark,
 }) => {
   const x = useSearch(
     {
@@ -360,6 +364,7 @@ const WithSearchHighlightIt = ({
       {...{
         inlineData,
         className,
+        dark,
         language,
         ...(x.length ? { searchInf: x[0].searchInf } : {}),
       }}
@@ -375,6 +380,7 @@ const LogLine = ({
   showAll,
   searchText,
   language,
+  dark,
 }) => {
   const ref = useRef();
   const isVisible = useIsVisible(ref);
@@ -384,7 +390,8 @@ const LogLine = ({
       className={classNames(
         'flex gap-4 items-center whitespace-pre border-b border-transparent',
         {
-          'hover:bg-gray-800': selectableLines,
+          'hover:bg-gray-800': selectableLines && dark,
+          'hover:bg-gray-200': selectableLines && !dark,
         }
       )}
       style={{
@@ -400,12 +407,14 @@ const LogLine = ({
               inlineData: line,
               searchText,
               language,
+              dark,
             }}
           />
         ) : (
           <FilterdHighlightIt
             {...{
               inlineData: line,
+              dark,
               searchInf,
               language,
             }}
@@ -418,7 +427,7 @@ const LogLine = ({
   );
 };
 
-const LineNumber = ({ searchInf, fontSize, lines }) => {
+const LineNumber = ({ searchInf, fontSize, lines, dark }) => {
   const ref = useRef();
   const isVisible = useIsVisible(ref);
   const [data, setData] = useState(() =>
@@ -440,11 +449,19 @@ const LineNumber = ({ searchInf, fontSize, lines }) => {
             {...{
               inlineData: data,
               language: 'accesslog',
-              className: 'bg-gray-800 border-gray-700 border-b px-2',
+              className: classNames('border-b px-2', {
+                'bg-gray-800 border-gray-700 ': dark,
+                'bg-gray-200 border-gray-300 ': !dark,
+              }),
             }}
           />
         ) : (
-          <span className="bg-gray-800 border-gray-700 border-b px-2">
+          <span
+            className={classNames('border-b px-2', {
+              'bg-gray-800 border-gray-700 ': dark,
+              'bg-gray-200 border-gray-300 ': !dark,
+            })}
+          >
             {data}
           </span>
         )}
@@ -466,6 +483,7 @@ const LogBlock = ({
   actionComponent,
   hideLines,
   language,
+  dark,
 }) => {
   const lines = data.split('\n');
 
@@ -505,7 +523,11 @@ const LogBlock = ({
   }, [data, maxLines]);
 
   return (
-    <div className="hljs p-2 rounded-md flex flex-col gap-2 h-full">
+    <div
+      className={classNames('hljs p-2 rounded-md flex flex-col gap-2 h-full', {
+        border: !dark,
+      })}
+    >
       <div className="flex justify-between px-2 items-center border-b border-gray-500 pb-3">
         <div className="">
           {data ? title : 'No logs generated in last 24 hours'}
@@ -561,6 +583,8 @@ const LogBlock = ({
         className={classNames('flex flex-1 overflow-auto', {
           'no-scroll-bar': noScrollBar,
           'hljs-log-scrollbar': !noScrollBar,
+          'hljs-log-scrollbar-night': !noScrollBar && dark,
+          'hljs-log-scrollbar-dary': !noScrollBar && !dark,
         })}
         ref={ref}
       >
@@ -571,7 +595,7 @@ const LogBlock = ({
                 return (
                   <LineNumber
                     key={`idx${searchInf.idx}`}
-                    {...{ searchInf, lines: y, fontSize }}
+                    {...{ searchInf, lines: y, fontSize, dark }}
                   />
                 );
               })}
@@ -584,6 +608,7 @@ const LogBlock = ({
                 <LogLine
                   key={searchInf.idx}
                   {...{
+                    dark,
                     searchInf,
                     line,
                     fontSize,
